@@ -165,6 +165,7 @@ Do not merge the previous patch branch wholesale into the new upstream branch. E
 
 All changes follow the same contribution path:
 
+```plaintext
 `New change / Cherry-pick / Bug fix / Maintenance`
 → `Temporary branch`
 → `Commit`
@@ -172,6 +173,7 @@ All changes follow the same contribution path:
 → `Pull Request`
 → `Review & Testing`
 → `Merge into patch/vX.Y.Z`
+```
 
 The patch branch is the maintained integration baseline, while Pull Requests serve as the audit trail for everything added, modified, or removed from that baseline.
 
