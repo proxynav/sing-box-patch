@@ -4,6 +4,7 @@ import (
 	"context"
 	"net"
 	"strings"
+	"sync"
 
 	"github.com/sagernet/sing-box/adapter"
 	"github.com/sagernet/sing-box/adapter/inbound"
@@ -35,6 +36,10 @@ type Inbound struct {
 	logger    logger.ContextLogger
 	listener  *listener.Listener
 	service   *anytls.Service
+	// ===== for v2bx ==
+	userconns sync.Map
+	uuidlist  []string
+	// ===== end for v2bx ==
 }
 
 func NewInbound(ctx context.Context, router adapter.Router, logger log.ContextLogger, tag string, options option.AnyTLSInboundOptions) (adapter.Inbound, error) {
@@ -76,6 +81,14 @@ func NewInbound(ctx context.Context, router adapter.Router, logger log.ContextLo
 		Listen:            options.ListenOptions,
 		ConnectionHandler: inbound,
 	})
+	// ===== for v2bx ==
+	uuidlist := make([]string, 0, len(options.Users))
+	for _, user := range options.Users {
+		uuidlist = append(uuidlist, user.Name)
+	}
+	inbound.userconns = sync.Map{}
+	inbound.uuidlist = uuidlist
+	// ===== end for v2bx ==
 	return inbound, nil
 }
 
@@ -106,6 +119,12 @@ func (h *Inbound) NewConnectionEx(ctx context.Context, conn net.Conn, metadata a
 		}
 		conn = tlsConn
 	}
+	// =====for v2bx ==
+	h.userconns.Store(conn, metadata.User)
+	onClose = N.AppendClose(onClose, func(err error) {
+		h.userconns.Delete(conn)
+	})
+	// ===end for v2bx ==
 	err := h.service.NewConnection(adapter.WithContext(ctx, &metadata), conn, metadata.Source, onClose)
 	if err != nil {
 		N.CloseOnHandshakeFailure(conn, onClose, err)
