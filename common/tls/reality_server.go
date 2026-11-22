@@ -85,6 +85,8 @@ func NewRealityServer(ctx context.Context, logger log.ContextLogger, options opt
 		}
 	}
 	tlsConfig.Type = N.NetworkTCP
+	//for v2bx
+	tlsConfig.Xver = options.Reality.Xver
 	tlsConfig.Dest = options.Reality.Handshake.ServerOptions.Build().String()
 
 	tlsConfig.ServerNames = map[string]bool{options.ServerName: true}
