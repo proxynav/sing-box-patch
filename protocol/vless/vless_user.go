@@ -7,6 +7,7 @@ import (
 	"github.com/sagernet/sing/common"
 )
 
+// the whole file for v2bx
 func (h *Inbound) AddUsers(users []option.VLESSUser) error {
 	h.users = append(h.users, users...)
 	h.service.UpdateUsers(

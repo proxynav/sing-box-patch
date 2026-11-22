@@ -5,6 +5,7 @@ import (
 	"github.com/sagernet/sing/common"
 )
 
+// the whole file for v2bx
 func (h *MultiInbound) AddUsers(users []option.ShadowsocksUser) error {
 	h.users = append(h.users, users...)
 	err := h.service.UpdateUsersWithPasswords(common.MapIndexed(h.users, func(index int, user option.ShadowsocksUser) int {

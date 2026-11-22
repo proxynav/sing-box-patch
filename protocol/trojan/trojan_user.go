@@ -7,6 +7,7 @@ import (
 	"github.com/sagernet/sing/common"
 )
 
+// the whole file for v2bx
 func (h *Inbound) AddUsers(users []option.TrojanUser) error {
 	h.users = append(h.users, users...)
 	err := h.service.UpdateUsers(common.MapIndexed(h.users, func(index int, user option.TrojanUser) int {
